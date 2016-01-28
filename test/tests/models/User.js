@@ -198,6 +198,45 @@ describe('User', () => {
 		});
 
 
+		describe('relationshipTo', () => {
+			it('should calculate a `self` relationship', async () => {
+				var [userA, userB] = await Promise.all([
+					User.get(conn, '306eabbb-cc2b-4f88-be19-4bb6ec98e5c3'),
+					User.get(conn, '306eabbb-cc2b-4f88-be19-4bb6ec98e5c3')
+				]);
+				assert.equal(await userA.relationshipTo(userB), 'self');
+			});
+			it('should calculate a `peer` relationship', async () => {
+				var [userA, userB] = await Promise.all([
+					User.get(conn, '51192909-3664-44d5-be62-c6b45f0b0ee6'),
+					User.get(conn, '9ad4b34b-781d-44fe-ac39-9b7ac43dde21')
+				]);
+				assert.equal(await userA.relationshipTo(userB), 'peer');
+			});
+			it('should calculate a `superior` relationship', async () => {
+				var [userA, userB] = await Promise.all([
+					User.get(conn, 'a6a0946d-eeb4-45cd-83c6-c7920f2272eb'),
+					User.get(conn, '1691f38d-92c8-4d86-9a89-da99528cfcb5')
+				]);
+				assert.equal(await userA.relationshipTo(userB), 'superior');
+			});
+			it('should calculate a `subordinate` relationship', async () => {
+				var [userA, userB] = await Promise.all([
+					User.get(conn, '1691f38d-92c8-4d86-9a89-da99528cfcb5'),
+					User.get(conn, 'a6a0946d-eeb4-45cd-83c6-c7920f2272eb')
+				]);
+				assert.equal(await userA.relationshipTo(userB), 'subordinate');
+			});
+			it('should calculate a `mixed` relationship', async () => {
+				var [userA, userB] = await Promise.all([
+					User.get(conn, '51192909-3664-44d5-be62-c6b45f0b0ee6'),
+					User.get(conn, '306eabbb-cc2b-4f88-be19-4bb6ec98e5c3')
+				]);
+				assert.equal(await userA.relationshipTo(userB), 'mixed');
+			});
+		});
+
+
 		describe('update', () => {
 			var time;
 			before(() => time = Date.now() / 1000);

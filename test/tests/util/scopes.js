@@ -78,6 +78,7 @@ describe('scopes', () => {
 		it('should match multi-star globs', () => {
 			assert.isTrue(scopes.can('client.**:resource:action', 'client.a:resource:action'));
 			assert.isTrue(scopes.can('client.**:resource:action', 'client.a.b:resource:action'));
+			assert.isTrue(scopes.can('**:**:**', 'client.a.b:resource:action'));
 			assert.isFalse(scopes.can('client.a:resource:action', 'client.**:resource:action'));
 			assert.isFalse(scopes.can('client.a.b:resource:action', 'client.**:resource:action'));
 			assert.isFalse(scopes.can('client.**:resource:action', 'client:resource:action'));
@@ -86,6 +87,7 @@ describe('scopes', () => {
 			assert.isFalse(scopes.can('client:resource:action', 'client.**:resource.a:action'));
 			assert.isFalse(scopes.can('client.**:resource:action', 'client.a:wrongresource:action'));
 			assert.isFalse(scopes.can('client.**:resource:action', 'client.a:resource:wrongaction'));
+			assert.isFalse(scopes.can('client.a.b:resource:action', '**:**:**'));
 		});
 		it('should match an array of scope rules', () => {
 			assert.isFalse(scopes.can(['client.b:resource:action', 'client.c:resource:action'], 'client.a:resource:action'));
@@ -178,6 +180,7 @@ describe('scopes', () => {
 			{args: [['*:b:c'], ['**:b:c']], results: ['*:b:c']},
 			{args: [['**:b:c'], ['*:b:c']], results: ['*:b:c']},
 			{args: [['**:b:c'], ['a:b:c']], results: ['a:b:c']},
+			{args: [['**.**.**', '**:b:c'], ['a:b:c']], results: ['a:b:c']},
 			{args: [['**:b:c', 'a:**:c'], ['a:b:c', 'x:y:c']], results: ['a:b:c']}
 		].forEach((test) => {
 			it('(' + test.args.join(') • (') + ') => ' + test.results, () => {
@@ -203,6 +206,7 @@ describe('scopes', () => {
 			{args: [['foo.**:b:c', 'foo.*:b:c', 'foo.*:b:c']], results: ['foo.**:b:c']},
 			{args: [['foo.**:b:c', 'foo.*:b:c', 'foo.*:b:c', 'foo.a:b:c']], results: ['foo.**:b:c']},
 			{args: [['foo.a:b:c', 'foo.*:b:c', 'foo.*:b:c', 'foo.**:b:c']], results: ['foo.**:b:c']},
+			{args: [['**:**:**', 'foo.a:b:c', 'foo.*:b:c', 'foo.*:b:c', 'foo.**:b:c']], results: ['**:**:**']},
 			{args: [['AuthX:credential.incontact.me:read', 'AuthX:credential.incontact.user:read', 'AuthX:credential.*.me:*']], results: ['AuthX:credential.*.me:*', 'AuthX:credential.incontact.user:read']}
 
 		].forEach((test) => {

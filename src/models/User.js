@@ -5,6 +5,7 @@ import Grant from './Grant';
 import Credential from './Credential';
 import Team from './Team';
 import validate from '../util/validator';
+import * as scopeUtils from '../util/scopes';
 import * as errors from '../errors';
 import uuid from 'uuid';
 
@@ -163,6 +164,29 @@ export default class User extends Model {
 	async can(scope, strict) {
 		var roles = await this.roles();
 		return roles.some(role => role.can(scope, strict));
+	}
+
+
+
+	async relationshipTo(other) {
+		var [myScopes, otherScopes] = await Promise.all([this.scopes(), other.scopes()]);
+
+		if (this.id === other.id)
+			return 'self';
+
+		if (myScopes.length === otherScopes.length && myScopes.every(s => otherScopes.indexOf(s) > -1))
+			return 'peer';
+
+		var i_can_do_everything_other_can_do = otherScopes.every((s) => scopeUtils.can(myScopes, s));
+		var other_can_do_everything_i_can_do = myScopes.every((s) => scopeUtils.can(otherScopes, s));
+
+		if (i_can_do_everything_other_can_do && !other_can_do_everything_i_can_do)
+			return 'superior';
+
+		if (!i_can_do_everything_other_can_do && other_can_do_everything_i_can_do)
+			return 'subordinate';
+
+		return 'mixed';
 	}
 
 
