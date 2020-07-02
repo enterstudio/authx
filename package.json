@@ -14,7 +14,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "basic-auth": "^1.0.3",
-    "bcrypt": "^0.8.5",
+    "bcrypt": "^5.0.0",
     "bluebird": "^3.0.6",
     "generic-pool": "^2.2.0",
     "handlebars": "^4.0.3",
