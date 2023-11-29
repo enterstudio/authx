@@ -24,9 +24,9 @@
     "lodash": "^3.10.1",
     "nodemailer": "^1.8.0",
     "raw-body": "^2.1.5",
-    "request-promise": "^1.0.1",
+    "request-promise": "^4.0.0",
     "rethinkdb": "^2.2.0",
-    "saml2-js": "^1.10.0",
+    "saml2-js": "^4.0.0",
     "scim-query-filter-parser": "^1.1.0",
     "scopeutils": "^1.0.0",
     "uuid": "^2.0.1"
